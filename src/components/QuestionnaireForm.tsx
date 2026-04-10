@@ -2,13 +2,33 @@ import { useState } from 'react'
 import { sections, type Question } from '../lib/questions'
 
 interface QuestionnaireFormProps {
+  initialAnswers?: Record<string, string | string[]>
   onComplete: (answers: Record<string, string | string[]>) => void
 }
 
-export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
+export function QuestionnaireForm({ initialAnswers, onComplete }: QuestionnaireFormProps) {
   const [currentStep, setCurrentStep] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
-  const [notes, setNotes] = useState<Record<string, string>>({})
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>(
+    () => {
+      if (!initialAnswers) return {}
+      // Separate notes from answers
+      const ans: Record<string, string | string[]> = {}
+      for (const [key, val] of Object.entries(initialAnswers)) {
+        if (!key.endsWith('_notes')) ans[key] = val
+      }
+      return ans
+    }
+  )
+  const [notes, setNotes] = useState<Record<string, string>>(
+    () => {
+      if (!initialAnswers) return {}
+      const n: Record<string, string> = {}
+      for (const [key, val] of Object.entries(initialAnswers)) {
+        if (key.endsWith('_notes')) n[key.replace('_notes', '')] = val as string
+      }
+      return n
+    }
+  )
 
   const section = sections[currentStep]
   const isLastStep = currentStep === sections.length - 1

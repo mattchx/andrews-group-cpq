@@ -21,9 +21,14 @@ function App() {
     window.scrollTo(0, 0)
   }
 
+  function handleEdit() {
+    setScreen('form')
+    window.scrollTo(0, 0)
+  }
+
   if (screen === 'welcome') return <Welcome onStart={() => setScreen('form')} />
-  if (screen === 'form') return <QuestionnaireForm onComplete={handleComplete} />
-  return <ResultsView answers={answers} onRestart={handleRestart} />
+  if (screen === 'form') return <QuestionnaireForm initialAnswers={answers} onComplete={handleComplete} />
+  return <ResultsView answers={answers} onRestart={handleRestart} onEdit={handleEdit} />
 }
 
 export default App
